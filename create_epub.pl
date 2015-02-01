@@ -3,6 +3,12 @@
 use strict ;
 use warnings ;
 
+use LWP::UserAgent ;
+
+use XML::LibXML ;
+
+
+
 # Original process, experimenting with things
 # Right now treating perl as a superduper shell script,
 # but in long run could replace almost all these steps with
@@ -19,10 +25,6 @@ my $issue_id = 0;
 #xsltproc get_links.xslt toc.xml | xargs -n 1 -i{} wget -r -l 1 --no-parent  -k {}
 #xsltproc get_links.xslt toc.xml | xargs -n 1 -i{} wget -r -l 1 -A jpg,jpeg,png,gif -k {}
 
-use LWP ;
-use File::Path qw( make_path ) ;
-
-
 print "processing $url \n" ;
 # TODO: Add in Log4perl
 
@@ -37,5 +39,89 @@ if( $url =~ /(issue[^\/s]+)\// ) {
     print "Issue id will be $issue_id \n";
 }
 
+# may need to use ile::path make_path if need
+# to create recusive structure, but looking
+# at manual attempt, not going to follow url
+# structure anyhow
+mkdir( $issue_id ) ;
 
-make_path( $issue_id . '/' . $url ) ;
+my $ua = LWP::UserAgent->new ;
+$ua->agent("Code4Lib Epub Maker Scraper") ;
+
+my $request = HTTP::Request->new(POST => 'http://' . $url ) ;
+
+my $result = $ua->request( $request ) ;
+
+if( ! ($result->is_success ) ) {
+    die( 'Failure! ' . $result->status_line ) ;
+}
+
+
+my $toc_xml = $result->content()  ;
+
+open my $toc_xml_fh, '>', $issue_id . '/toc.xml' or die "Can't save table of contents source xml file" ;
+print $toc_xml_fh $toc_xml ;
+close $toc_xml_fh ;
+
+
+
+# so we want to do two things with this table of contents:
+# 1) use the table of contents to loop over the
+#    various documents and download them into
+#    the issue directory we just created
+# 2) build up an index type page
+
+download_articles( $issue_id, $toc_xml ) ;
+create_index_page( $issue_id, $toc_xml ) ;
+
+
+
+# once that's all done I think we can just zip up the content
+# to create an epub
+
+# package_epub( $issue_id ) ;
+
+sub download_articles {
+
+    my $issue_id = shift ;
+    my $toc_xml  = shift ;
+
+    my $parser = XML::LibXML->new() ;
+    my $dom = $parser->load_xml( string => $toc_xml ) ;
+
+    my $url_nodes = $dom->findnodes( '//fullTextUrl' ) ;
+    foreach my $url_node ($url_nodes->get_nodelist() ) {
+        my $text_nodes = $url_node->findnodes( 'text()' ) ;
+        my $article_url ;
+        foreach my $text_node ($text_nodes->get_nodelist()) {
+            $article_url .= $text_node->data ;
+        }
+        print $article_url . "\n" ;
+        print "Processing $article_url \n " ;
+        download_article( $issue_id, $article_url ) ;
+        
+    }
+    # be nice! waiting a wee bit
+    sleep(2) ;
+
+ 
+}
+
+sub download_article {
+    my $issue_id = shift;
+    my $article_url = shift ;
+
+    #TODO: look at LWP and stuff
+    chdir( $issue_id ) ;
+
+    print `wget -r -l 1 --no-parent -k $article_url` ;
+    print `wget -r -l 1 -A jpg,jpeg,png,gif -k $article_url` ;
+
+    
+}
+
+sub create_index {
+
+    my $issue_id = shift ;
+    my $toc_xml  = shift ;
+}
