@@ -1,5 +1,7 @@
 #!/usr/env perl
 
+package create_epub ;
+
 use strict ;
 use warnings ;
 
@@ -8,13 +10,14 @@ use LWP::UserAgent ;
 use XML::LibXML ;
 
 use File::Copy ;
-
+use File::Slurp ;
 use File::Find ;
 
-#use Mojo ;
+use Mojo ;
 
 
-__PACKAGE__->rune() ;
+__PACKAGE__->run() unless caller;
+
 sub run {
 
     # Original process, experimenting with things
@@ -164,8 +167,27 @@ sub clean_up_links {
 
 
 sub wanted {
-
+    
     if( -f $_ && $_ =~ /\.html?$/ ) {
-        print "Would be cleaning up links on $_ \n" ;
+        print "Cleaning up links on $File::Find::name  \n" ;
+
+        my $lines = read_file( $_ ) ;
+        my $dom = Mojo::DOM->new( $lines ) ;
+        
+        for my $link ($dom->find('a[href]')->each) {
+            #$link->attr(rel => 'nofollow')
+            #    if $link->attr('href') !~ m(\Ahttps?://www[.]myforum[.]com(?:/|\z));
+            my $prev_link_value = $link->attr('href') ;
+            print $prev_link_value . "\n" ;
+            if( $prev_link_value =~ m{https?://journal.code4lib.org/(articles|media|wp-content)} ) {
+                my $new_link_value = $prev_link_value ; 
+                $new_link_value =~ s{https?://}{} ;
+                print "Changing to $new_link_value \n" ;
+                $link->attr( href => $new_link_value ) ;
+            }
+        }
+        
+        write_file "${_}~", "$dom";
+        rename "${_}~" => $_ ;
     }
 }
