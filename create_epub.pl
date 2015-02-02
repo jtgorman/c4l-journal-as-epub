@@ -7,80 +7,89 @@ use LWP::UserAgent ;
 
 use XML::LibXML ;
 
+use File::Copy ;
+
+use File::Find ;
+
+#use Mojo ;
 
 
-# Original process, experimenting with things
-# Right now treating perl as a superduper shell script,
-# but in long run could replace almost all these steps with
-# perl modules
+__PACKAGE__->rune() ;
+sub run {
 
-my $url = $ARGV[0] ;
-my $issue_id = 0;
+    # Original process, experimenting with things
+    # Right now treating perl as a superduper shell script,
+    # but in long run could replace almost all these steps with
+    # perl modules
+    
+    my $url = $ARGV[0] ;
+    my $issue_id = 0;
+    
+    # this was a hack that gets the articles and the associated
+    # content, or at least some of it.
+    
+    #wget http://journal.code4lib.org/issues/issue1/feed/doaj
+    #mv doaj toc.xml
+    #xsltproc get_links.xslt toc.xml | xargs -n 1 -i{} wget -r -l 1 --no-parent  -k {}
+    #xsltproc get_links.xslt toc.xml | xargs -n 1 -i{} wget -r -l 1 -A jpg,jpeg,png,gif -k {}
+    
+    print "processing $url \n" ;
+    # TODO: Add in Log4perl
+    
+    if ( $url =~ /^\s*https?:\/\/(.*)/ ) {
+        # we don't want the prefix, mostly for 
+        $url = $1 ;
+        print "Chopped url to $url\n" ;
+    }
+    
+    if( $url =~ /(issue[^\/s]+)\// ) {
+        $issue_id = $1;
+        print "Issue id will be $issue_id \n";
+    }
+    
+    # may need to use ile::path make_path if need
+    # to create recusive structure, but looking
+    # at manual attempt, not going to follow url
+    # structure anyhow
+    mkdir( $issue_id ) ;
+    
+    my $ua = LWP::UserAgent->new ;
+    $ua->agent("Code4Lib Epub Maker Scraper") ;
+    
+    my $request = HTTP::Request->new(POST => 'http://' . $url ) ;
+    
+    my $result = $ua->request( $request ) ;
+    
+    if( ! ($result->is_success ) ) {
+        die( 'Failure! ' . $result->status_line ) ;
+    }
+    
+    
+    my $toc_xml = $result->content()  ;
+    
+    open my $toc_xml_fh, '>', $issue_id . '/toc.xml' or die "Can't save table of contents source xml file" ;
+    print $toc_xml_fh $toc_xml ;
+    close $toc_xml_fh ;
+    
+    
 
-# this was a hack that gets the articles and the associated
-# content, or at least some of it.
-
-#wget http://journal.code4lib.org/issues/issue1/feed/doaj
-#mv doaj toc.xml
-#xsltproc get_links.xslt toc.xml | xargs -n 1 -i{} wget -r -l 1 --no-parent  -k {}
-#xsltproc get_links.xslt toc.xml | xargs -n 1 -i{} wget -r -l 1 -A jpg,jpeg,png,gif -k {}
-
-print "processing $url \n" ;
-# TODO: Add in Log4perl
-
-if ( $url =~ /^\s*https?:\/\/(.*)/ ) {
-    # we don't want the prefix, mostly for 
-    $url = $1 ;
-    print "Chopped url to $url\n" ;
+    # so we want to do two things with this table of contents:
+    # 1) use the table of contents to loop over the
+    #    various documents and download them into
+    #    the issue directory we just created
+    # 2) build up an index type page
+    
+    download_articles( $issue_id, $toc_xml ) ;
+    
+    clean_up_links( $issue_id ) ;
+    
+    create_index_page( $issue_id, $toc_xml ) ;
+    
+    # once that's all done I think we can just zip up the content
+    # to create an epub
+    
+    # package_epub( $issue_id ) ;
 }
-
-if( $url =~ /(issue[^\/s]+)\// ) {
-    $issue_id = $1;
-    print "Issue id will be $issue_id \n";
-}
-
-# may need to use ile::path make_path if need
-# to create recusive structure, but looking
-# at manual attempt, not going to follow url
-# structure anyhow
-mkdir( $issue_id ) ;
-
-my $ua = LWP::UserAgent->new ;
-$ua->agent("Code4Lib Epub Maker Scraper") ;
-
-my $request = HTTP::Request->new(POST => 'http://' . $url ) ;
-
-my $result = $ua->request( $request ) ;
-
-if( ! ($result->is_success ) ) {
-    die( 'Failure! ' . $result->status_line ) ;
-}
-
-
-my $toc_xml = $result->content()  ;
-
-open my $toc_xml_fh, '>', $issue_id . '/toc.xml' or die "Can't save table of contents source xml file" ;
-print $toc_xml_fh $toc_xml ;
-close $toc_xml_fh ;
-
-
-
-# so we want to do two things with this table of contents:
-# 1) use the table of contents to loop over the
-#    various documents and download them into
-#    the issue directory we just created
-# 2) build up an index type page
-
-download_articles( $issue_id, $toc_xml ) ;
-create_index_page( $issue_id, $toc_xml ) ;
-
-
-
-# once that's all done I think we can just zip up the content
-# to create an epub
-
-# package_epub( $issue_id ) ;
-
 sub download_articles {
 
     my $issue_id = shift ;
@@ -114,14 +123,49 @@ sub download_article {
     #TODO: look at LWP and stuff
     chdir( $issue_id ) ;
 
-    print `wget -r -l 1 --no-parent -k $article_url` ;
-    print `wget -r -l 1 -A jpg,jpeg,png,gif -k $article_url` ;
+    print `wget -r -l 1 --no-parent --convert-links $article_url` ;
+    print `wget -r -l 1 -A jpg,jpeg,png,gif --convert-links $article_url` ;
 
+    # I'm not quite sure why, but with the structure of
+    # wordpress & using wget this way  it creates a directory and also
+    # a html file (ie 39/ and 39.1)
+    #
+    # For now trying just to move any of those files into
+    # the corresponding file as index.html
+
+    if( $article_url =~ /\/(\d+)\/?$/) {
+        my $article_id = $1;
+
+        move( $article_id . '.1',  $article_id . '/index.html' ) ;
     
+    }    
+    chdir( '..' ) ;
 }
 
-sub create_index {
+sub create_index_page {
 
     my $issue_id = shift ;
     my $toc_xml  = shift ;
+
+    # crappy hack, but works for now
+    print `xsltproc create_index.xsl $issue_id/toc.xml > $issue_id/index.html`;
+
+}
+
+# if I could fix wget or use a different spider
+# this probably wouldn't be an issue
+sub clean_up_links {
+
+    my $issue_id = shift ;
+
+    find(\&wanted, $issue_id) ;
+    
+}
+
+
+sub wanted {
+
+    if( -f $_ && $_ =~ /\.html?$/ ) {
+        print "Would be cleaning up links on $_ \n" ;
+    }
 }
