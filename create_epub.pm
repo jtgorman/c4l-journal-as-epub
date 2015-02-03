@@ -15,6 +15,7 @@ use File::Find ;
 
 use Mojo ;
 
+use EBook::EPUB ;
 
 __PACKAGE__->run() unless caller;
 
@@ -84,15 +85,54 @@ sub run {
     
     download_articles( $issue_id, $toc_xml ) ;
     
-    clean_up_links( $issue_id ) ;
+    clean_up( $issue_id ) ;
     
     create_index_page( $issue_id, $toc_xml ) ;
     
     # once that's all done I think we can just zip up the content
     # to create an epub
     
-    # package_epub( $issue_id ) ;
+    package_epub( $issue_id ) ;
 }
+
+sub package_epub {
+
+    my $issue_id = shift ;
+    my $epub = EBook::EPUB->new ;
+
+    $epub->add_title("Code4Lib $issue_id") ;
+    $epub->add_language('en') ;
+
+
+    # could create epub object
+    find( sub{ process_epub_file( $epub, $_, $File::Find::name ) ; },
+          $issue_id ) ;
+
+    $epub->pack_zip("$issue_id.epub") ;
+}
+
+sub process_epub_file {
+
+    my $epub = shift ;
+    my $file = shift ;
+    my $full_path = shift ;
+    
+    if( -f $file && $file =~ /\.x?html?$/) {
+        $epub->copy_xhtml( $file, $full_path ) ;
+    }
+    elsif( -f $file && $file =~ /\.css$/) {
+        $epub->copy_stylesheet( $file, $full_path ) ;
+    }
+    elsif( -f $file && $file =~ /.xml/) {
+        #ignore now 
+    }
+    elsif( -f $file && $file =~ /(\.png|\.jpg)/) {
+        
+        $epub->copy_file( $file, $full_path, "image/$1" ) ;
+    }
+
+}
+
 sub download_articles {
 
     my $issue_id = shift ;
@@ -165,12 +205,14 @@ sub create_index_page {
 
 # if I could fix wget or use a different spider
 # this probably wouldn't be an issue
-sub clean_up_links {
+sub clean_up {
 
     my $issue_id = shift ;
 
+    # clean up links
     find(\&wanted, $issue_id) ;
-    
+
+    find(\&celan_up
 }
 
 
