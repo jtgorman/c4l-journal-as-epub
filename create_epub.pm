@@ -129,20 +129,28 @@ sub download_article {
     print `wget -r -l 1 --no-parent --convert-links $article_url` ;
     print `wget -r -l 1 -A jpg,jpeg,png,gif --convert-links $article_url` ;
 
-    # I'm not quite sure why, but with the structure of
+    
+    if( $article_url =~ /\/(\d+)\/?$/) {
+        fix_article_index_page( $1 ) ;
+    }    
+    chdir( '..' ) ;
+}
+
+sub fix_article_index_page {
+
+   # I'm not quite sure why, but with the structure of
     # wordpress & using wget this way  it creates a directory and also
     # a html file (ie 39/ and 39.1)
     #
     # For now trying just to move any of those files into
     # the corresponding file as index.html
 
-    if( $article_url =~ /\/(\d+)\/?$/) {
-        my $article_id = $1;
-
-        move( $article_id . '.1',  $article_id . '/index.html' ) ;
     
-    }    
-    chdir( '..' ) ;
+    
+    my $article_id = shift;
+    move( "journal.code4lib.org/articles/${article_id}.1",
+          "journal.code4lib.org/articles/${article_id}/index.html" ) ;
+    
 }
 
 sub create_index_page {
