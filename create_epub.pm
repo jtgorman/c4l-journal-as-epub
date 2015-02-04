@@ -256,11 +256,13 @@ sub clean_up {
     my $issue_id = shift ;
 
     # clean up links
-    find(\&wanted, $issue_id) ;
+    find(\&clean_up_internal_links, $issue_id) ;
+
+
 }
 
 
-sub wanted {
+sub clean_up_internal_links {
     
     if( -f $_ && $_ =~ /\.html?$/ ) {
         print "Cleaning up links on $File::Find::name  \n" ;
