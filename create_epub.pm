@@ -17,6 +17,8 @@ use Mojo ;
 
 use EBook::EPUB ;
 
+use List::MoreUtils qw(natatime);
+
 __PACKAGE__->run() unless caller;
 
 sub run {
@@ -108,9 +110,53 @@ sub package_epub {
     find( sub{ process_epub_file( $epub, $_, $File::Find::name ) ; },
           $issue_id ) ;
 
+    # hmmm, now we need to add nav points
+    # add_navpoint(%opts)
+    #  class
+    #  content
+    #  id 
+    #  play_order
+    #  label 
+
+    $epub->add_navpoint( {content => "$issue_id/index.html",
+                          label   => 'Table of Contents',
+                          play_order => 1 } ) ;
+
+
+    add_article_nav( $epub,
+                     $issue_id ) ;
+                     
     $epub->pack_zip("$issue_id.epub") ;
 }
 
+
+sub add_article_nav {
+
+
+    my $epub = shift ;
+    my $issue_id = shift ;
+    
+    my $lines = read_file( $issue_id . '/toc.xml' ) ;
+    my $dom = Mojo::DOM->new( $lines ) ;
+
+    # want thetitle & fullTextUrl of each record
+    # ideally as hash
+    my $records_filtered = natatime 2, $dom->find('title, fullTextUrl')->map('text')->each ;
+    my $order = 2 ;
+    while( my @field = $records_filtered->() ) {
+        my $title = $field[0] ;
+        my $url = $field[1] ; 
+        
+        my $uri = $url ;
+        $uri =~ s{\s*https?://}{} ;
+
+        print "Adding  $title (${uri}) to nav points\n" ;
+        $epub->add_navpoint( { content => "${issue_id}/${uri}/index.html",
+                               label   => $title,
+                               play_order => $order++ } ) ;
+        
+    }
+}
 sub process_epub_file {
 
     my $epub = shift ;
@@ -211,8 +257,6 @@ sub clean_up {
 
     # clean up links
     find(\&wanted, $issue_id) ;
-
-    find(\&celan_up
 }
 
 
