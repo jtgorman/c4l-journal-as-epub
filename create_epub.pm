@@ -100,7 +100,6 @@ sub run {
     
     
     clean_up( $issue_id ) ;
-    
     create_index_page( $issue_id, $toc_xml ) ;
     
     # once that's all done I think we can just zip up the content
@@ -342,8 +341,13 @@ sub clean_up_html {
         remove_sidebar( $dom ) ;
         remove_login( $dom ) ;
         remove_comments( $dom ) ;
-        
-        write_file "${_}~", "$dom";
+
+        # apparently write_file does not utf8 encode on way out...
+        # and we need to? ugh.
+        open(my $FH, ">:encoding(UTF-8)", "${_}~")
+            or die "Failed to open file - $!";
+
+        write_file $FH, "$dom";
         rename "${_}~" => $_ ;
     }
 }
@@ -351,18 +355,20 @@ sub clean_up_html {
 sub remove_login {
     
     my $dom = shift ;
-    $dom->find( q{div[id="login"]} )->remove() ;
+    $dom->find( q{div[id="login"]} )->each( sub {$_->remove()} ) ;
+    $dom->find( q{p[id="login"]} )->each( sub {$_->remove()} ) ;
 }
 
 sub remove_sidebar {
 
     my $dom = shift ;
-    $dom->find( q{div[id="meta"]})->remove() ;
+    $dom->find( q{div[id="meta"]})->each( sub { $_-> remove() } ) ;
+    
 }
 
 sub remove_comments {
     my $dom = shift ;
-    $dom->find( q{div[id="comments"]} )->remove() ;
+    $dom->find( q{div[class="comments"]} )->each( sub { $_ -> remove() } ) ;
 }
 
 sub clean_up_internal_links {
@@ -372,11 +378,11 @@ sub clean_up_internal_links {
         #$link->attr(rel => 'nofollow')
         #    if $link->attr('href') !~ m(\Ahttps?://www[.]myforum[.]com(?:/|\z));
         my $prev_link_value = $link->attr('href') ;
-        print $prev_link_value . "\n" ;
+#        print $prev_link_value . "\n" ;
         if( $prev_link_value =~ m{https?://journal.code4lib.org/(articles|media|wp-content)} ) {
             my $new_link_value = $prev_link_value ; 
             $new_link_value =~ s{https?://}{} ;
-            print "Changing to $new_link_value \n" ;
+ #           print "Changing to $new_link_value \n" ;
             $link->attr( href => $new_link_value ) ;
         }
     }

@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+	
+		<title>The Code4Lib Journal – Beyond OPAC 2.0: Library Catalog as Versatile Discovery Platform</title>
+	
+		<meta content="WordPress 4.0" name="generator"> <!-- leave this for stats -->
+    <link href="http://journal.code4lib.org/wp-content/themes/c4lj/images/favicon.ico" rel="shortcut icon">
+		<link href="http://journal.code4lib.org/wp-content/themes/c4lj/style.css" media="screen, print" rel="stylesheet" type="text/css">
+		<!--[if lte IE 7]>
+		<link rel="stylesheet" href="http://journal.code4lib.org/wp-content/themes/c4lj/fix-ie7.css" type="text/css" media="screen" />
+		<![endif]-->
+		<!--[if lte IE 6]>
+		<link rel="stylesheet" href="http://journal.code4lib.org/wp-content/themes/c4lj/fix-ie6.css" type="text/css" media="screen" />
+		<![endif]-->
+		<link href="http://journal.code4lib.org/wp-content/themes/c4lj/print.css" media="print" rel="stylesheet" type="text/css">
+		<link href="http://feeds.feedburner.com/c4lj" rel="alternate" title="The Code4Lib Journal Syndication Feed" type="application/rss+xml">
+		<link href="http://journal.code4lib.org/xmlrpc.php" rel="pingback">
+
+
+<link href="http://journal.code4lib.org/articles/10/feed" rel="alternate" title="The Code4Lib Journal » Beyond OPAC 2.0: Library Catalog as Versatile Discovery Platform Comments Feed" type="application/rss+xml">
+<link href="http://journal.code4lib.org/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=3.9.3" id="contact-form-7-css" media="all" rel="stylesheet" type="text/css">
+<script src="http://journal.code4lib.org/wp-includes/js/jquery/jquery.js?ver=1.11.1" type="text/javascript"></script>
+<script src="http://journal.code4lib.org/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1" type="text/javascript"></script>
+<link href="http://journal.code4lib.org/xmlrpc.php?rsd" rel="EditURI" title="RSD" type="application/rsd+xml">
+<link href="http://journal.code4lib.org/wp-includes/wlwmanifest.xml" rel="wlwmanifest" type="application/wlwmanifest+xml"> 
+<link href="23/trackback" rel="prev" title="Facet-Based Search and Navigation With LCSH: Problems and Opportunities">
+<link href="http://journal.code4lib.org/articles/39" rel="next" title="Editorial Introduction — Issue 1">
+<meta content="WordPress 4.0" name="generator">
+<link href="10.1" rel="canonical">
+<link href="http://journal.code4lib.org/?p=10" rel="shortlink">
+	<!-- unAPI -->
+	<link href="http://journal.code4lib.org/wp-content/plugins/unapi/server.php" rel="unapi-server" title="unAPI" type="application/xml">
+<link href="http://journal.code4lib.org/wp-content/plugins/wp-recaptcha/recaptcha.css" rel="stylesheet" type="text/css"><style id="syntaxhighlighteranchor" type="text/css"></style>
+	</head>
+	<body>
+		<div id="page">
+			<div id="header">
+				<div id="headerbackground">
+					<h1><a href="http://journal.code4lib.org/"><img alt="The Code4Lib Journal" src="http://journal.code4lib.org/wp-content/themes/c4lj/images/logo.png"></a></h1>
+					<h2 id="issn">ISSN 1940-5758</h2>
+				</div>
+			</div>
+			
+						
+
+			<div id="content">
+								<div class="article" id="post-10">
+					<p id="issueDesignation"><a href="http://journal.code4lib.org/issues/issues/issue1">Issue 1, 2007-12-17</a></p>
+					<h1 class="articletitle">Beyond OPAC 2.0: Library Catalog as Versatile Discovery Platform</h1>
+					<div class="abstract">
+						<p>North Carolina State University has developed an Application Programming Interface (API) “platform”, called CatalogWS, to provide web service access to catalog search and availability services.  This project was motivated by the realization that the discovery of library collections should not be limited to a single catalog application, and such a platform could support the efficient creation of novel interfaces based on consistent services. Some technical discussion of the CatalogWS architecture is provided, including a technical description of web service protocols implemented.  Several applications providing discovery in novel contexts have already been developed based on CatalogWS, and are described in some depth. CatalogWS has helped create a culture of experimentation and enabled a larger group of staff to work with library catalog data and services in new and interesting ways.</p>
+					</div>
+					<div class="entry">
+						<abbr class="unapi-id" title="http://journal.code4lib.org/articles/10"><!-- &nbsp; --></abbr>
+<p>By <a href="http://www.lib.ncsu.edu/staff/tsierra" mce_href="http://www.lib.ncsu.edu/staff/tsierra">Tito Sierra</a>, <a href="http://www.lib.ncsu.edu/staff/jdryan" mce_href="http://www.lib.ncsu.edu/staff/jdryan">Joseph Ryan</a>, and <a href="http://www.lib.ncsu.edu/staff/mgwust" mce_href="http://www.lib.ncsu.edu/staff/mgwust">Markus Wust</a></p>
+<h2>Introduction</h2>
+<p>Many libraries, with the goal of modernizing their web presence, are racing to deploy a “next generation catalog.” Next generation catalog applications typically offer a mix of these features: faceted navigation, keyword searching, relevance-ranked search results, “did you mean?”-style search revisions, item recommendations, RSS feeds, and mechanisms to collect and display user feedback [<a href="10.1#notes" mce_href="#notes">1</a><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info%3Asid%2Focoins.info%3Agenerator&amp;rft.genre=article&amp;rft.atitle=Next-Generation+Library+Catalogs&amp;rft.title=Library+Technology+Reports&amp;rft.stitle=Library+Technology+Reports&amp;rft.issn=0024-2586&amp;rft.date=2007&amp;rft.volume=43&amp;rft.issue=4&amp;rft.aulast=Breeding&amp;rft.aufirst=Marshall&amp;rft.au=Marshall+Breeding">(<a href="http://journal.code4lib.org/coins">COinS</a>)</span>]. These “OPAC 2.0&quot; efforts to replace or upgrade legacy OPACs with more powerful alternatives will no doubt improve the overall catalog experience for many library users. Unfortunately, the gains from these efforts are limited because a single catalog application cannot be optimized for all library users and uses.</p>
+<p>Consider, for example, the two basic types of searches a user might perform in a library catalog: known-item and exploratory. In a known-item search the user typically has a specific item in mind; the goal is to acquire information about this item as quickly as possible. In an exploratory search the user has a topic in mind and the goal is to acquire a list of items related to the topic. An interface optimized for a known-item search would likely take advantage of the information the user knows about the item, thus emphasizing bibliographic metadata such as the item’s title or author. Optimizing for an exploratory search would likely emphasize descriptive metadata that items share in common, such as subject headings or user-defined tags. It would be challenging, if not impossible, to optimize a single library catalog application for both of these common use cases.</p>
+<p>This conflict begs the question: why should the discovery of library collections be limited to a single catalog application? Given the resources required to keep library catalog data accurate and up-to-date, libraries ought to explore methods for integrating this data into relevant external applications. Lorcan Dempsey, of OCLC, refers to this process as “lifting out the catalog discovery experience.” He writes:</p>
+<blockquote><p>As we work to aggregate supplyÃ¢â¬Â¦ so we must work to place these resources where they will best meet user needs. In this process, discovery of the catalogued collection will be increasingly disembedded, or lifted out, from the ILS system, and re-embedded in a variety of other contexts — and potentially changed in the process. [<a href="10.1#notes" mce_href="#notes">2</a>]</p>
+</blockquote>
+<p>Realizing Dempsey’s vision requires increased flexibility in how we provide programming interfaces to our catalog data. To enable creative use of catalog data and improve interoperability with external systems, we need to think beyond the application-specific enhancements that characterize current OPAC 2.0 efforts. One strategy is to think about our catalogs as a platform that can support many discovery applications, not just the OPAC. We believe this approach shows great promise for libraries looking to enhance long-term end-user discovery and use of library collections.</p>
+<h2>CatalogWS</h2>
+<p>Netscape co-founder Marc Andreessen’s definition of “platform” neatly describes the fundamental difference between platforms and applications:</p>
+<blockquote><p>… a “platform” is a system that can be reprogrammed and therefore customized by outside developers — users — and in that way, adapted to countless needs and niches that the platform’s original developers could not have possibly contemplated, much less had time to accommodate.</p>
+</blockquote>
+<blockquote><p>In contrast, an “application” is a system that cannot be reprogrammed by outside developers. It is a closed environment that does whatever its original developers intended it to do, and nothing more. [<a href="10.1#notes" mce_href="#notes">3</a>]</p>
+</blockquote>
+<p>In early 2007 the NCSU Libraries began to experiment with the “catalog as platform” approach through an initiative called CatalogWS.</p>
+<p>The original designers of CatalogWS, Tito Sierra and Emily Lynema, were members of the team that implemented the first Endeca-powered OPAC [<a href="10.1#notes" mce_href="#notes">4</a>] in January 2006. Following the release of the new OPAC, the implementation team faced a list of post-launch feature enhancements. Two of these enhancements were RSS feeds for catalog searches, and the integration of catalog search results into Quick Search [<a href="10.1#notes" mce_href="#notes">5</a>], our library website search tool. Rather than modify the OPAC application, the designers decided it would be better to create a separate application programming interface (API) to the search indices used by the OPAC. Once in place, the API would make it easier to build the desired feature enhancements, as well as enable more versatile catalog data use in the future. After a few weeks of development, the CatalogWS API was born.</p>
+<p>CatalogWS currently provides two functions: the “search” service and the “availability” service. The search service returns item and facet values for a given search query, whereas the availability service returns item availability information for a given ISBN. Documentation for both services is available on the CatalogWS project homepage [<a href="10.1#notes" mce_href="#notes">6</a>]. To date, most of our CatalogWS-powered applications have used the search service.</p>
+<p>The scope of the API is necessarily limited because it uses search indices, rather than querying the full set of data stored in the ILS. For example, the API does not expose all the data in the MARC record for our catalog items, since not all MARC fields are indexed by our search server. The designers decided to use search indices as a data source because they provide easy access to normalized data. Using search indices also made the data modeling process much easier because the indices already captured and consolidated the most useful catalog data for end-user application development. This convenience comes at the price of limiting the type of applications that can be built with the API. Since the API is read-only, we could not build tools for modifying bibliographic data or updating the inventory status of items in the catalog. These ILS-oriented functions were beyond the scope of what the designers intended to accomplish with the API.</p>
+<p><img alt="NCSU Libraries catalog architecture" mce_src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-techarchitecture_thumb.png" src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-techarchitecture_thumb.png"><br>
+<b>Figure 1: NCSU Libraries catalog architecture</b> [<a href="journal.code4lib.org/media/issue1/sierra/iss1-sierra-techarchitecture_large.png" mce_href="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-techarchitecture_large.png">View full-size image</a>]</p>
+<p>Despite the scope limitations, we have realized several benefits by using our existing Endeca-generated indices as a data source. Architecturally, search indices are designed to accommodate a high volume of low-latency requests. Building on search indices has also enabled us to include search-specific features in our applications, such as faceted data and spelling suggestions. The earlier Endeca implementation decision to include holdings information in the search indices proved to be very useful for the API. It means we are able to include inventory data in our applications, such as the name of the library that holds the item, the call number of the item, and even the current availability status of the item since the last index update.</p>
+<p>The technical implementation of the API was modeled after the REST web APIs implemented by companies such as Yahoo! [<a href="10.1#notes" mce_href="#notes">7</a>], Facebook [<a href="10.1#notes" mce_href="#notes">8</a>], and Amazon.com [<a href="10.1#notes" mce_href="#notes">9</a>]. Requests to the API are made through the HTTP GET protocol. Here is an example of a basic search request:</p>
+<pre>http://www.lib.ncsu.edu/catalogws/?service=search&amp;query=usability</pre>
+<p>The search service supports many features one might expect from a search API, such as the ability to limit the number of results returned, and ability to change the sort order of returned results. By default, the service queries our catalog’s “keyword anywhere” index, which looks for keyword matches across many fields in the catalog record. One can also search specific fields such as title, author, or ISBN/ISSN. It is even possible to supply a null keyword to browse the entire catalog. Including facet results in the response makes it possible to query specialized slices of the catalog using shared facet attributes, such as commonly shared subject headings, material formats, or author names.</p>
+<p>CatalogWS responses are available in a variety of output formats, with a custom XML format as the default. The decision to define a custom base XML format for the search and availability services was motivated by several factors. First, the API designers believed it would be useful to include as much of the data from the search indices as possible into a single search request, rather than requiring multiple requests to the same data source. For example, the search service returns several categories of response data including search metadata (e.g. total results, spelling suggestions), bibliographic metadata (e.g. item title, author name), holdings data (e.g. library location, call number), and facet results. Although there are many existing standards such as MARC-XML, MODS, and Dublin Core that could describe some of this data in varying levels of granularity, no existing standard seemed suitable for such a heterogeneous collection of data. Second, the API was intended for use by developers at NCSU, rather than for programmatic external application consumption, so cost-benefit analysis of distilling the base API profile into one or more specific standard formats weighed in favor of a custom approach.</p>
+<p>Below is an abbreviated XML response for the earlier example. A cached version of the full response is available <a href="journal.code4lib.org/media/issue1/sierra/iss1-sierra-usability.xml" mce_href="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-usability.xml">here</a>.</p>
+<pre class="brush: xml; title: ; notranslate" title="">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;searchResponse xmlns=&quot;http://www.lib.ncsu.edu/catalogws/1.0&quot;&gt;
+&lt;requestUri&gt;http://www2.lib.ncsu.edu:9921/catalogws/?service=search&amp;query=usability&lt;/requestUri&gt;
+&lt;catalogLink&gt;http://www2.lib.ncsu.edu/catalog/?Ntt=usability&amp;Ntk=Keyword&amp;N=0&amp;Nty=1&lt;/catalogLink&gt;
+
+&lt;searchInfo&gt;
+&lt;query&gt;
+&lt;terms&gt;usability&lt;/terms&gt;
+&lt;key&gt;Keyword&lt;/key&gt;
+&lt;/query&gt;
+
+&lt;totalResults&gt;477&lt;/totalResults&gt;
+&lt;offset&gt;0&lt;/offset&gt;
+&lt;itemsPerPage&gt;30&lt;/itemsPerPage&gt;
+&lt;/searchInfo&gt;
+
+&lt;item id=&quot;1791483&quot;&gt;
+&lt;catalogLink&gt;http://catalog.lib.ncsu.edu/web2/tramp2.exe/do_ccl_search/guest?setting_key=files&amp;record_screen=record_brief.html&amp;*search_button=keyword&amp;servers=1home&amp;index=ckey&amp;query=1791483&lt;/catalogLink&gt;
+&lt;title&gt;Cost-justifying usability : an update for an Internet age&lt;/title&gt;
+
+&lt;pubDate&gt;c2005.&lt;/pubDate&gt;
+&lt;format&gt;Book&lt;/format&gt;
+&lt;isbn&gt;0120958112&lt;/isbn&gt;
+&lt;holdings institution=&quot;ncsu&quot;&gt;
+
+&lt;library name=&quot;D.H. Hill Library&quot;&gt;
+&lt;holdingsItem&gt;
+&lt;callNumber&gt;QA76.9 .U83 C67 2005&lt;/callNumber&gt;
+&lt;location&gt;Stacks (6th floor)&lt;/location&gt;
+&lt;status&gt;Available&lt;/status&gt;
+
+&lt;/holdingsItem&gt;
+&lt;/library&gt;
+&lt;/holdings&gt;
+&lt;/item&gt;
+&lt;!-- repeating &lt;item&gt; elements--&gt;
+
+&lt;facet id=&quot;format&quot;&gt;
+&lt;title&gt;Format&lt;/title&gt;
+&lt;catalogLink&gt;http://www2.lib.ncsu.edu/catalog/?Ntt=usability&amp;Ntk=Keyword&amp;N=0&amp;Nty=1&amp;Ne=200043#200043&lt;/catalogLink&gt;
+
+&lt;value&gt;
+&lt;requestUri&gt;http://www2.lib.ncsu.edu:9921/catalogws/?service=search&amp;query=usability&amp;N=206437&lt;/requestUri&gt;
+&lt;catalogLink&gt;http://www2.lib.ncsu.edu/catalog/?Ntt=usability&amp;Ntk=Keyword&amp;N=206437&lt;/catalogLink&gt;
+
+&lt;title&gt;Book&lt;/title&gt;
+&lt;count&gt;461&lt;/count&gt;
+&lt;/value&gt;
+&lt;!-- repeating &lt;value&gt; elements --&gt;
+
+&lt;/facet&gt;
+&lt;!-- repeating &lt;facet&gt; elements --&gt;
+&lt;/searchResponse&gt;
+</pre>
+<p>Although the base XML format is custom, the CatalogWS search service has built-in support for returning results in several standard output formats. Search results can be returned in RSS 2.0, OpenSearch, and JSON formats. Additionally, the API supports an optional “style” parameter that enables requests to specify a path to an XSL stylesheet. When the style parameter is passed, CatalogWS provides server-side XSL transformation services for the request. The style parameter makes it possible for developers to create interactive CatalogWS-powered web applications using only XSL stylesheets.</p>
+<h2>Current Applications</h2>
+<p>Since going into production in January 2007, CatalogWS has provided the infrastructure for a variety of applications at NCSU Libraries. Some of the applications developed to date include specialized or experimental catalog interfaces, while others are innovative collection promotion display tools. Below, we provide a few examples of how we have used CatalogWS thus far.</p>
+<p>To begin, we will discuss the MobiLIB catalog, an application designed for known-item searches in a mobile context [<a href="10.1#notes" mce_href="#notes">10</a>]. Some example use cases for this application are looking up call numbers and checking the availability of items in the library bookstacks. Unlike our information-rich OPAC, the MobiLIB catalog is a barebones search tool that allows users to look up an item by keyword, title, author, or ISBN. Given the importance of item location and item availability implied by the mobile use context, the application emphasizes the display of inventory data, such as call numbers, and enables users to limit their search to items that are not checked out.</p>
+<p><img alt="MobiLIB catalog" mce_src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-mobilib_combination.png" src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-mobilib_combination.png"><br>
+<b>Figure 2: MobiLIB catalog</b> [<a href="journal.code4lib.org/media/issue1/sierra/iss1-sierra-mobilib_combination_fullsize.png" mce_href="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-mobilib_combination_fullsize.png">View full-size image</a>]</p>
+<p>Developing MobiLIB presented several challenges. The first was getting the application to function and display properly on a variety of mobile device platforms including handheld PCs, web-enabled cell phones, and PDAs. The smaller displays on these devices limit the amount of information that can be displayed in each view. Mobile devices also have speed and cost-related bandwidth issues. These unique constraints forced us to rethink the catalog search experience from the ground up.</p>
+<p>While the MobiLIB catalog is optimized for known-item searches, FacetBrowser is an experimental catalog interface that was designed to emphasize facets for use in exploratory searches [<a href="10.1#notes" mce_href="#notes">11</a>]. FacetBrowser places facets persistently at the center of the application’s interface. This design encourages users to browse the entire catalog at once, promoting use of facets as a way to explore or navigate the results set at every level. We believe this approach has the potential of exposing users to items in the catalog that they otherwise might not have discovered in a more conventional catalog search application.</p>
+<p><img alt="FacetBrowser" mce_src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-facetbrowser_browse.png" src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-facetbrowser_browse.png"><br>
+<b>Figure 3: FacetBrowser</b> [<a href="journal.code4lib.org/media/issue1/sierra/iss1-sierra-facetbrowser_browse_fullsize.png" mce_href="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-facetbrowser_browse_fullsize.png">View full-size image</a>]</p>
+<p>Besides serving as an experimental catalog interface, FacetBrowser has also provided us with an opportunity to promote library collections in new ways. As part of our recently opened NCSU Libraries Learning Commons, several large screen displays were installed in the new space to promote a variety of library services. Some of these displays are dedicated to showing “bookwalls,” which are displays of book cover images for a thematic collection of books from the catalog. FacetBrowser provides the means for library staff to quickly generate these bookwalls. The process involves applying one of several built-in output styles to an editorially selected list of items in FacetBrowser. The application automatically generates the HTML used to display the bookwalls on our large screen displays, enabling library staff with limited technical skills to promote specialized collections of books in a visually appealing way.</p>
+<p><img alt="FacetBrowser bookwall output display" mce_src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-facetbrowser_display_output.png" src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-facetbrowser_display_output.png"><br>
+<b>Figure 4: FacetBrowser bookwall output display</b> [<a href="journal.code4lib.org/media/issue1/sierra/iss1-sierra-facetbrowser_display_output_fullsize.png" mce_href="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-facetbrowser_display_output_fullsize.png">View full-size image</a>]</p>
+<p>In addition to bookwalls created by FacetBrowser, we use CatalogWS to promote library collections in other ways. The New Books Bookwall is similar to the staff created thematic bookwalls, except that the focus is on featuring books recently added to the collection [<a href="10.1#notes" mce_href="#notes">12</a>]. This bookwall is different because the items it displays are not hand selected. Instead, a scheduled CatalogWS request retrieves the 300 newest items, with the goal of providing a peek at what’s new at the library.</p>
+<p>The New Faculty Books display is a variant on the New Books Bookwall [<a href="10.1#notes" mce_href="#notes">13</a>]. This application focuses on featuring new books published by NCSU faculty. Although the user interface is slightly different, the underlying technical implementation is the same. The New Faculty Books display adds an additional filter constraint to items authored by NCSU faculty.</p>
+<p><img alt="New Faculty Books list" mce_src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-new_faculty_books.png" src="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-new_faculty_books.png"><br>
+<b>Figure 5: New Faculty Books list</b> [<a href="journal.code4lib.org/media/issue1/sierra/iss1-sierra-new_faculty_books_fullsize.png" mce_href="http://journal.code4lib.org/media/issue1/sierra/iss1-sierra-new_faculty_books_fullsize.png">View full-size image</a>]</p>
+<h2>Closing Thoughts</h2>
+<p>Returning to Andreessen’s definition of a “platform,” we see that the final part of his definition is that a platform enables outside developers to adapt the system “to countless needs and niches that the platform’s original developers could not have possibly contemplated, much less had time to accommodate.” This observation mirrors the NCSU Libraries’ experience perfectly. Although the original motivation for the API was to enable development of some OPAC feature enhancements, we have been able to use the API to create completely new applications that exist independently of the OPAC.</p>
+<p>The platform approach has provided us with two distinct benefits. First, the API has reduced catalog application development time because it exposes data in an easy-to-use format. A second benefit is that our API has enabled versatile use of catalog data, as illustrated by the applications we have built so far.</p>
+<p>As we reflect on our experience to date, we find that the collection of data exposed by our API could be more comprehensive. We encourage those who are developing a similar platform to cast a broad net when deciding what content to include in their API. Although our lightweight approach has worked well for us, we acknowledge the limitations of relying on search indices as a catalog data source. Those interested in learning from a more ambitious “catalog as platform” approach should look at the Talis Platform [<a href="10.1#notes" mce_href="#notes">14</a>], which supports a wide range of interfaces and technologies.</p>
+<p>Overall, we believe the time invested in developing our catalog platform was worth the effort and should continue to pay dividends in the near future. We never anticipated that CatalogWS would serve as a basis for such a broad range of applications. In our organization, it has fostered a culture of experimentation and enabled a larger group of staff to work with library catalog data in new and interesting ways. Although we are in the early stages of working with our platform, we recognize there is a large amount of untapped potential. We would like to see other institutions experiment with the platform approach and we welcome the opportunity to learn from other libraries about how to fully exploit the value of catalog data beyond the OPAC.</p>
+<h2><a class="" name="notes" title="notes"></a>Notes</h2>
+<ol>
+<li>Marshall Breeding. Next-Generation Library Catalogs. Library Technology Reports 43(4). July/August 2007.<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info%3Asid%2Focoins.info%3Agenerator&amp;rft.genre=article&amp;rft.atitle=Next-Generation+Library+Catalogs&amp;rft.title=Library+Technology+Reports&amp;rft.stitle=Library+Technology+Reports&amp;rft.issn=0024-2586&amp;rft.date=2007&amp;rft.volume=43&amp;rft.issue=4&amp;rft.aulast=Breeding&amp;rft.aufirst=Marshall&amp;rft.au=Marshall+Breeding">(<a href="http://journal.code4lib.org/coins">COinS</a>)</span></li>
+<li>Lorcan Dempsey. The Library Catalogue in the New Discovery Environment: Some Thoughts. Ariadne 48. July 2006. <a href="http://www.ariadne.ac.uk/issue48/dempsey/" mce_href="http://www.ariadne.ac.uk/issue48/dempsey/">http://www.ariadne.ac.uk/issue48/dempsey/</a></li>
+<li><a href="http://blog.pmarca.com/2007/06/analyzing_the_f.html" mce_href="http://blog.pmarca.com/2007/06/analyzing_the_f.html">http://blog.pmarca.com/2007/06/analyzing_the_f.html</a></li>
+<li><a href="http://www.lib.ncsu.edu/catalog/" mce_href="http://www.lib.ncsu.edu/catalog/">http://www.lib.ncsu.edu/catalog/</a></li>
+<li><a href="http://www.lib.ncsu.edu/dli/projects/quicksearch/" mce_href="http://www.lib.ncsu.edu/dli/projects/quicksearch/">http://www.lib.ncsu.edu/dli/projects/quicksearch/</a></li>
+<li><a href="http://www.lib.ncsu.edu/catalog/ws/" mce_href="http://www.lib.ncsu.edu/catalog/ws/">http://www.lib.ncsu.edu/catalog/ws/</a></li>
+<li><a href="http://developer.yahoo.com/search/" mce_href="http://developer.yahoo.com/search/">http://developer.yahoo.com/search/</a></li>
+<li><a href="http://wiki.developers.facebook.com/index.php/API" mce_href="http://wiki.developers.facebook.com/index.php/API">http://wiki.developers.facebook.com/index.php/API</a></li>
+<li><a href="http://aws.amazon.com/" mce_href="http://aws.amazon.com/">http://aws.amazon.com</a></li>
+<li><a href="http://www.lib.ncsu.edu/m/catalog/" mce_href="http://www.lib.ncsu.edu/m/catalog/">http://www.lib.ncsu.edu/m/catalog/</a></li>
+<li><a href="http://www.lib.ncsu.edu/facetbrowser/" mce_href="http://www.lib.ncsu.edu/facetbrowser/">http://www.lib.ncsu.edu/facetbrowser/</a></li>
+<li><a href="http://www.lib.ncsu.edu/display/bookwall/eboard.php" mce_href="http://www.lib.ncsu.edu/display/bookwall/eboard.php">http://www.lib.ncsu.edu/display/bookwall/eboard.php</a></li>
+<li><a href="http://www.lib.ncsu.edu/display/facultybooks/list" mce_href="http://www.lib.ncsu.edu/display/facultybooks/list">http://www.lib.ncsu.edu/display/facultybooks/list</a></li>
+<li><a href="http://www.talis.com/tdn/platform/" mce_href="http://www.talis.com/tdn/platform/">http://www.talis.com/tdn/platform/</a></li>
+</ol>
+<h2 class="abouttheauthor">About the Authors</h2>
+<p><a href="http://www.lib.ncsu.edu/staff/tsierra" mce_href="http://www.lib.ncsu.edu/staff/tsierra">Tito Sierra</a> is Assistant Head for Digital Library Development at NCSU Libraries where he leads a small research and development team that builds new digital library applications.</p>
+<p><a href="http://www.lib.ncsu.edu/staff/jdryan" mce_href="http://www.lib.ncsu.edu/staff/jdryan">Joseph Ryan</a> is an NCSU Libraries Fellow in the Digital Library Initiatives and Administration departments.</p>
+<p><a href="http://www.lib.ncsu.edu/staff/mgwust" mce_href="http://www.lib.ncsu.edu/staff/mgwust">Markus Wust</a> is an NCSU Libraries Fellow in the Digital Library Initiatives and Special Collections departments.</p>
+					</div>
+														</div>
+				<!-- You can start editing here. -->
+
+							</div>
+
+			<div id="footer">
+				
+				<p id="copyright">This work is licensed under a <a href="http://creativecommons.org/licenses/by/3.0/us/" rel="license">Creative Commons Attribution 3.0 United States License</a>.<br><a href="http://creativecommons.org/licenses/by/3.0/us/" rel="license"><img alt="Creative Commons License" src="http://i.creativecommons.org/l/by/3.0/us/80x15.png"></a></p>
+			</div>
+			                <script type="text/javascript">
+                var sub = document.getElementById('submit');
+                document.getElementById('recaptcha-submit-btn-area').appendChild (sub);
+                document.getElementById('submit').tabIndex = 6;
+                if ( typeof _recaptcha_wordpress_savedcomment != 'undefined') {
+                        document.getElementById('comment').value = _recaptcha_wordpress_savedcomment;
+                }
+                document.getElementById('recaptcha_table').style.direction = 'ltr';
+                </script><script src="http://journal.code4lib.org/wp-content/plugins/akismet/_inc/form.js?ver=3.0.2" type="text/javascript"></script>
+<script src="http://journal.code4lib.org/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.9" type="text/javascript"></script>
+<script src="http://journal.code4lib.org/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.9" type="text/javascript"></script>
+<script type="text/javascript">
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://journal.code4lib.org/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.9";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://journal.code4lib.org/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.9";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.defaults['toolbar'] = false;
+	SyntaxHighlighter.all();
+</script>
+<script src="http://journal.code4lib.org/wp-content/plugins/contact-form-7/includes/js/jquery.form.min.js?ver=3.51.0-2014.06.20" type="text/javascript"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var _wpcf7 = {"loaderUrl":"http:\/\/journal.code4lib.org\/wp-content\/plugins\/contact-form-7\/images\/ajax-loader.gif","sending":"Sending ..."};
+/* ]]> */
+</script>
+<script src="http://journal.code4lib.org/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=3.9.3" type="text/javascript"></script>
+		</div>
+		<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+		</script>
+		<script type="text/javascript">
+		_uacct = "UA-3211381-1";
+		urchinTracker();
+		</script>
+	</body>
+</html>
