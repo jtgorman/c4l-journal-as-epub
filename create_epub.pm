@@ -94,7 +94,10 @@ sub run {
     #    the issue directory we just created
     # 2) build up an index type page
     
-    download_articles( $issue_id, $toc_xml ) ;
+    my @article_ids = download_articles( $issue_id, $toc_xml ) ;
+
+    fix_index_locations( $issue_id, @article_ids ) ;
+    
     
     clean_up( $issue_id ) ;
     
@@ -138,6 +141,31 @@ sub package_epub {
     $epub->pack_zip("$issue_id.epub") ;
 }
 
+sub fix_index_locations {
+
+    my $issue_id = shift ;
+    my @article_ids = @_ ;
+
+    use Data::Dumper ;
+    
+    print Dumper( \@article_ids ) ;
+    
+    local $CWD = $issue_id ;
+
+    
+    # seem to be some issues w/ timing, so 
+    # doing this next step after all the downloads...
+    sleep(1) ;
+
+    foreach my $article_id (@article_ids) {
+
+        print "fixing $article_id index pages\n" ;
+        print "Currently at " . getcwd() . "\n";
+        
+        fix_article_index_page('journal.code4lib.org/articles',
+                               $article_id ) ;
+    }    
+}
 
 sub add_article_nav {
 
@@ -171,31 +199,37 @@ sub process_epub_file {
     my $epub = shift ;
     my $file = shift ;
     my $full_path = shift ;
+
+    print "Procesing $file at $full_path \n" ;
     
     if( -f $file && $file =~ /\.x?html?$/) {
+        print "html spotted, processing \n" ;
         $epub->copy_xhtml( $file, $full_path ) ;
     }
     elsif( -f $file && $file =~ /\.css$/) {
+            print "css spotted, processing \n" ;
         $epub->copy_stylesheet( $file, $full_path ) ;
     }
     elsif( -f $file && $file =~ /.xml/) {
         #ignore now 
     }
     elsif( -f $file && $file =~ /(\.png|\.jpg)/) {
-        
+        print "image spotted, copying\n" ;
         $epub->copy_file( $file, $full_path, "image/$1" ) ;
     }
 
 }
 
 sub download_articles {
-
+    
     my $issue_id = shift ;
     my $toc_xml  = shift ;
-
+    
+    my @article_ids = ();
+    
     my $parser = XML::LibXML->new() ;
     my $dom = $parser->load_xml( string => $toc_xml ) ;
-
+    
     my $url_nodes = $dom->findnodes( '//fullTextUrl' ) ;
     foreach my $url_node ($url_nodes->get_nodelist() ) {
         my $text_nodes = $url_node->findnodes( 'text()' ) ;
@@ -204,15 +238,19 @@ sub download_articles {
             $article_url .= $text_node->data ;
         }
         print $article_url . "\n" ;
-        print "Processing $article_url \n " ;
+        print "Processing _${article_url}_ \n " ;
         download_article( $issue_id, $article_url ) ;
-        
-    }
-    # be nice! waiting a wee bit
-    sleep(2) ;
 
+        if( $article_url =~ m{/(\d+)/?\s*$}x ) {
+            push( @article_ids, $1 ) ;
+        }
+    }
+
+    return @article_ids ;
  
 }
+
+
 
 sub download_article {
     my $issue_id = shift;
@@ -220,24 +258,15 @@ sub download_article {
 
     print "downloading article -> $article_url\n" ;
     #TODO: look at LWP and stuff
-    chdir( $issue_id ) ;
+    local $CWD =  $issue_id  ;
 
     if( ! $skip_download ) {
         my $results = `wget -r -l 1 --no-parent --convert-links $article_url` ;
         $results .= `wget -r -l 1 -A jpg,jpeg,png,gif --convert-links $article_url` ;
     }
+    # be nice! waiting a wee bit
+    sleep(2) ;
 
-    
-    if( $article_url =~  m{(\d+)/?\s*$}) {
-        my $article_id = $1 ;
-        print "fixing $article_id index pages\n" ;
-        print "Currently at " . getcwd() . "\n";
-    
-        fix_article_index_page('journal.code4lib.org/articles',
-                               $article_id ) ;
-        #fix_article_index_page( $issue_id, $article_id ) ;
-    }    
-    chdir( '..' ) ;
 }
 
 #might want to change so using file paths
@@ -291,50 +320,68 @@ sub clean_up {
 
     my $issue_id = shift ;
 
-    # clean up links
-    find(\&clean_up_internal_links, $issue_id) ;
+    # not the most efficient way to do this..
+    # TODO: refactor so just one recursive patha nd clean up all html in one go
+    #       Either pass around the dom object or just have a pass
+    #       of functions 
+    
 
+    find(\&clean_up_html, $issue_id ) ;
 }
 
-#sub clean_up_index_pages {
-#
-#    my $path = $_ ;
-#    # we're looking for two possible patterns
-#    # either we have a file name with an article id + .1
-#    # or just a solo file w/ an article id
-#    #
-#    if(-f $path && $path =~ /(\d)*\.1$/ ) {
-#        move($path, $1 . '/index.html') ;
-#    }
-#    elsif( -f $path && $_=~ /^(\d)$/ ) {
-#        move($path, $path . '_tmp' ) ;
-#        mkdir( $path ) ;
-#        move( $_ . '_tmp', 
-#    }
-#}
-
-sub clean_up_internal_links {
+sub clean_up_html {
     
     if( -f $_ && $_ =~ /\.html?$/ ) {
-        print "Cleaning up links on $File::Find::name  \n" ;
 
         my $lines = read_file( $_ ) ;
         my $dom = Mojo::DOM->new( $lines ) ;
         
-        for my $link ($dom->find('a[href]')->each) {
-            #$link->attr(rel => 'nofollow')
-            #    if $link->attr('href') !~ m(\Ahttps?://www[.]myforum[.]com(?:/|\z));
-            my $prev_link_value = $link->attr('href') ;
-            print $prev_link_value . "\n" ;
-            if( $prev_link_value =~ m{https?://journal.code4lib.org/(articles|media|wp-content)} ) {
-                my $new_link_value = $prev_link_value ; 
-                $new_link_value =~ s{https?://}{} ;
-                print "Changing to $new_link_value \n" ;
-                $link->attr( href => $new_link_value ) ;
-            }
-        }
+        print "Cleaning up $File::Find::name  \n" ;
+        
+        clean_up_internal_links( $dom ) ;
+        remove_sidebar( $dom ) ;
+        remove_login( $dom ) ;
+        remove_comments( $dom ) ;
         
         write_file "${_}~", "$dom";
         rename "${_}~" => $_ ;
     }
 }
+
+sub remove_login {
+    
+    my $dom = shift ;
+    $dom->find( q{div[id="login"]} )->remove() ;
+}
+
+sub remove_sidebar {
+
+    my $dom = shift ;
+    $dom->find( q{div[id="meta"]})->remove() ;
+}
+
+sub remove_comments {
+    my $dom = shift ;
+    $dom->find( q{div[id="comments"]} )->remove() ;
+}
+
+sub clean_up_internal_links {
+
+    my $dom = shift ;
+    for my $link ($dom->find('a[href]')->each) {
+        #$link->attr(rel => 'nofollow')
+        #    if $link->attr('href') !~ m(\Ahttps?://www[.]myforum[.]com(?:/|\z));
+        my $prev_link_value = $link->attr('href') ;
+        print $prev_link_value . "\n" ;
+        if( $prev_link_value =~ m{https?://journal.code4lib.org/(articles|media|wp-content)} ) {
+            my $new_link_value = $prev_link_value ; 
+            $new_link_value =~ s{https?://}{} ;
+            print "Changing to $new_link_value \n" ;
+            $link->attr( href => $new_link_value ) ;
+        }
+    }
+}
+
+
+
+__END__
