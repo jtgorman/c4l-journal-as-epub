@@ -21,59 +21,41 @@ my $issue_id = 'fake_issue' ;
 set_up_dir_and_file_1( $issue_id,
                        $article_id ) ;
 
-ok(-e 't/test_dir_and_file_1/'
+my $test_article_dir_1 = 't/test_dir_and_file_1/'
            . $issue_id
-           . '/journal.code4lib.org/articles/'
-           . $article_id . '.1' ) ;
+           . '/journal.code4lib.org/articles/' ;
+
+ok(-e $test_article_dir_1 . $article_id . '.1' ) ;
 
 
-find( sub{ create_epub::fix_article_index_page( 10 ) },
-      't/test_dir_and_file_1/' . $issue_id
-  ) ;
+create_epub::fix_article_index_page( $test_article_dir_1, 10 ) ;
 
-ok( -e 't/test_dir_and_file_1/'
-        . $issue_id
-        . '/journal.code4lib.org/articles/'
-        . $article_id ) ;
+ok( -e $test_article_dir_1 . $article_id . "/index.html" ) ;
 
-ok( !( -e 't/test_dir_and_file_1/'
-           . $issue_id
-           . '/journal.code4lib.org/articles/'
-           . $article_id . '.1' ) ) ;
-
-
+ok( !( -e $test_article_dir_1 . $article_id . '.1' ) ) ;
 
 tear_down_dir_and_file( 1 ) ;
 
 
 set_up_dir_and_file_2(  $issue_id,
-                       $article_id ) ;
+                        $article_id ) ;
 
 
-ok( -e 't/test_dir_and_file_2/'
+my $test_dir_2 = 't/test_dir_and_file_2/'
         . $issue_id . '/' 
-        . '/journal.code4lib.org/articles/'
-        . $article_id );
+        . '/journal.code4lib.org/articles/' ;
+       
+ok( -e  $test_dir_2 . $article_id );
 
-ok( ! -e 't/test_dir_and_file_2/'
-         . $issue_id . '/' 
-             . '/journal.code4lib.org/articles/'
+ok( ! -e   $test_dir_2
          .  $article_id
          . '/index.html' );
 
-find( sub{ create_epub::fix_article_index_page( 10 ) },
-      't/test_dir_and_file_2/' . $issue_id
-  ) ;
+create_epub::fix_article_index_page( $test_dir_2, 10  ) ;
 
-ok( ! -f 't/test_dir_and_file_2/'
-        . $issue_id . '/' 
-        . '/journal.code4lib.org/articles/'
-        . $article_id );
+ok( ! -f $test_dir_2 . $article_id );
 
-ok( -e 't/test_dir_and_file_2/'
-         . $issue_id . '/' 
-         . '/journal.code4lib.org/articles/'
-         . $article_id . '/index.html' );
+ok( -e $test_dir_2 . $article_id . '/index.html' );
 
 tear_down_dir_and_file( 2 ) ;
     

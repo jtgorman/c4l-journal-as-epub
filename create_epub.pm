@@ -19,9 +19,18 @@ use EBook::EPUB ;
 
 use List::MoreUtils qw(natatime);
 
+use Cwd ;
+use File::chdir;
+
+my $skip_download = 0 ;
 __PACKAGE__->run() unless caller;
 
 sub run {
+
+
+    use Getopt::Long ;
+    GetOptions( 'skip-download' => \$skip_download ) ;
+
 
     # Original process, experimenting with things
     # Right now treating perl as a superduper shell script,
@@ -209,34 +218,61 @@ sub download_article {
     my $issue_id = shift;
     my $article_url = shift ;
 
+    print "downloading article -> $article_url\n" ;
     #TODO: look at LWP and stuff
     chdir( $issue_id ) ;
 
-    print `wget -r -l 1 --no-parent --convert-links $article_url` ;
-    print `wget -r -l 1 -A jpg,jpeg,png,gif --convert-links $article_url` ;
+    if( ! $skip_download ) {
+        my $results = `wget -r -l 1 --no-parent --convert-links $article_url` ;
+        $results .= `wget -r -l 1 -A jpg,jpeg,png,gif --convert-links $article_url` ;
+    }
 
     
-    if( $article_url =~ /\/(\d+)\/?$/) {
-        fix_article_index_page( $1 ) ;
+    if( $article_url =~  m{(\d+)/?\s*$}) {
+        my $article_id = $1 ;
+        print "fixing $article_id index pages\n" ;
+        print "Currently at " . getcwd() . "\n";
+    
+        fix_article_index_page('journal.code4lib.org/articles',
+                               $article_id ) ;
+        #fix_article_index_page( $issue_id, $article_id ) ;
     }    
     chdir( '..' ) ;
 }
 
+#might want to change so using file paths
 sub fix_article_index_page {
 
-   # I'm not quite sure why, but with the structure of
+    my $article_path = shift ;
+    my $article_id = shift ;
+
+    local $CWD  = $article_path ;
+    # I'm not quite sure why, but with the structure of
     # wordpress & using wget this way  it creates a directory and also
     # a html file (ie 39/ and 39.1)
     #
     # For now trying just to move any of those files into
     # the corresponding file as index.html
 
+    # occasionally there's just a file that's the article id
+    print "Looking for $article_id, current at $CWD \n " ;
     
-    
-    my $article_id = shift;
-    move( "journal.code4lib.org/articles/${article_id}.1",
-          "journal.code4lib.org/articles/${article_id}/index.html" ) ;
-    
+    if( -d $article_id && -f ($article_id . '.1') ) {
+        print "found directory & file \n" ;
+        move( "${article_id}.1",
+              "${article_id}/index.html" ) ;
+    }
+    elsif( -e $article_id && -f $article_id) {
+        print "just found file \n" ;
+        move( $article_id,
+              "${article_id}~" ) ;
+
+        mkdir( $article_id ) ;
+
+        move( "${article_id}~",
+              $article_id . '/index.html' ) ;
+    }
+    print "finished fixing article index path for $article_id at $article_path  \n" ;
 }
 
 sub create_index_page {
@@ -258,9 +294,24 @@ sub clean_up {
     # clean up links
     find(\&clean_up_internal_links, $issue_id) ;
 
-
 }
 
+#sub clean_up_index_pages {
+#
+#    my $path = $_ ;
+#    # we're looking for two possible patterns
+#    # either we have a file name with an article id + .1
+#    # or just a solo file w/ an article id
+#    #
+#    if(-f $path && $path =~ /(\d)*\.1$/ ) {
+#        move($path, $1 . '/index.html') ;
+#    }
+#    elsif( -f $path && $_=~ /^(\d)$/ ) {
+#        move($path, $path . '_tmp' ) ;
+#        mkdir( $path ) ;
+#        move( $_ . '_tmp', 
+#    }
+#}
 
 sub clean_up_internal_links {
     
