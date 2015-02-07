@@ -131,7 +131,8 @@ sub package_epub {
 
     $epub->add_navpoint( {content => "$issue_id/index.html",
                           label   => 'Table of Contents',
-                          play_order => 1 } ) ;
+                          play_order => 1,
+                          id => 'pub-toc'} ) ;
 
 
     add_article_nav( $epub,
@@ -189,8 +190,10 @@ sub add_article_nav {
         print "Adding  $title (${uri}) to nav points\n" ;
         $epub->add_navpoint( { content => "${issue_id}/${uri}/index.html",
                                label   => $title,
-                               play_order => $order++ } ) ;
-        
+                               play_order => $order,
+                               id => 'article' . ($order - 1 ),
+                           } ) ;
+        $order++ ; 
     }
 }
 sub process_epub_file {
