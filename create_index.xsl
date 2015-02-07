@@ -28,7 +28,8 @@
     <div>
       <xsl:element name="a">
         <xsl:attribute name="href">
-          <xsl:value-of select="concat(substring-after(fullTextUrl,'http://'),'/index.html')" />
+          <xsl:value-of select="concat(substring-after(fullTextUrl,'http://'),
+                                '/index.html')" />
         </xsl:attribute>
         <span class="title"><xsl:value-of select="title" /></span>
       </xsl:element> <br />
