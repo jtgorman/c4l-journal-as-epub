@@ -13,7 +13,15 @@ use File::Copy ;
 use File::Slurp ;
 use File::Find ;
 
+# for correcting some stuff in the DOM
 use Mojo ;
+
+#for transforming html -> xhtml strict
+# html tidy seems a wrapper around a fork of the tidy
+# libraries. For now just going to call out to
+# the tidy cli
+#use HTML::Tidy ;
+
 
 use EBook::EPUB ;
 
@@ -352,7 +360,19 @@ sub clean_up_html {
 
         write_file $FH, "$dom";
         rename "${_}~" => $_ ;
+
+        # Unfortuantly the "xhtml transitional" of
+        # the ournal pages..isn't actually valid xhtml
+        # which leads to wanrings, going to see if can't avoid that
+
+        #my $tidy = HTML::Tidy->new( { output_xhtml => 1, tidy_mark = 0  } ) ;
+        my $msg = `tidy -utf8 -asxhtml -m  $_` ;
+
+
+
     }
+
+    
 }
 
 sub remove_login {
