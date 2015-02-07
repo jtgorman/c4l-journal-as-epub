@@ -263,8 +263,8 @@ sub download_article {
     local $CWD =  $issue_id  ;
 
     if( ! $skip_download ) {
-        my $results = `wget -r -l 1 --no-parent --convert-links $article_url` ;
-        $results .= `wget -r -l 1 -A jpg,jpeg,png,gif --convert-links $article_url` ;
+        my $results = `wget -p -k --no-parent  $article_url` ;
+        #        $results .= `wget -r -l 1 -A jpg,jpeg,png,gif --convert-links $article_url` ;
     }
     # be nice! waiting a wee bit
     sleep(2) ;
@@ -377,20 +377,37 @@ sub remove_comments {
 sub clean_up_internal_links {
 
     my $dom = shift ;
-    for my $link ($dom->find('a[href]')->each) {
-        #$link->attr(rel => 'nofollow')
-        #    if $link->attr('href') !~ m(\Ahttps?://www[.]myforum[.]com(?:/|\z));
+    for my $link ($dom->find('a[href],link[href]')->each) {
         my $prev_link_value = $link->attr('href') ;
-#        print $prev_link_value . "\n" ;
+        
         if( $prev_link_value =~ m{https?://journal.code4lib.org/(articles|media|wp-content)} ) {
             my $new_link_value = $prev_link_value ; 
             $new_link_value =~ s{https?://}{} ;
- #           print "Changing to $new_link_value \n" ;
+            #           print "Changing to $new_link_value \n" ;
             $link->attr( href => $new_link_value ) ;
+        }
+        elsif( $prev_link_value =~ m{^../(articles|media|wp-content)} ) {
+            # ok, since we moved this down a level, need to bump up
+            # the ../
+            # could also just replace w/ paths, probably should do for css
+            my $new_link_value = '../' .$prev_link_value ; 
+            $link->attr( href => $new_link_value ) ;
+            
+        }
+        
+    }
+    
+    for my $link ($dom->find('img[src]')->each) {
+        my $prev_link_value = $link->attr('src') ;
+        if( $prev_link_value =~ m{^../(articles|media|wp-content)} ) {
+            # ok, since we moved this down a level, need to bump up
+            # the ../
+            # could also just replace w/ paths, probably should do for css
+            my $new_link_value = '../' .$prev_link_value ; 
+            $link->attr( src => $new_link_value ) ;
+            
         }
     }
 }
-
-
 
 __END__

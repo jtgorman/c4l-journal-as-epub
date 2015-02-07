@@ -11,6 +11,6 @@ Some possibilities:
   and add to doc.  (Parse out dom and cleanup first, to avoid downloading
   more than needed.)
 * wget nd, then sort those files out?
-* Of course, could just ignore stylesheets completely and link against some designed for the "ebook" version
+* Of course, could just ignore stylesheets completely and link against some designed for the "ebook" version, replacing links to style w/ the actual ones
 
 The latter possibility is probably the best long term solution, can just use LWP user agent.
