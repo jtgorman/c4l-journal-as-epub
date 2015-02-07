@@ -1,0 +1,16 @@
+
+
+So my wget command gets a little wonky because of the structure of the pages.  If we allow parents, we end up slurping the stuff on the left column.
+
+This seems to mess up the page pre-reqs.
+
+Some possibilities:
+* play more with wget, maybe some combination will work
+* just download article html, use DOM tool to iterate after initial download
+  of pages looking for css links and the like. Add to a queue, then download
+  and add to doc.  (Parse out dom and cleanup first, to avoid downloading
+  more than needed.)
+* wget nd, then sort those files out?
+* Of course, could just ignore stylesheets completely and link against some designed for the "ebook" version
+
+The latter possibility is probably the best long term solution, can just use LWP user agent.
