@@ -112,7 +112,9 @@ sub run {
     
     # once that's all done I think we can just zip up the content
     # to create an epub
-    
+
+    copy( 'skel/journal.code4lib.org/wp-content/themes/c4lj/style.css',
+          $issue_id . '/journal.code4lib.org/wp-content/themes/c4lj/style.css' ) ;
     package_epub( $issue_id ) ;
 }
 
