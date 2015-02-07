@@ -263,7 +263,7 @@ sub download_article {
     local $CWD =  $issue_id  ;
 
     if( ! $skip_download ) {
-        my $results = `wget -p -k --no-parent  $article_url` ;
+        my $results = `wget -nc -p -k --no-parent  $article_url` ;
         #        $results .= `wget -r -l 1 -A jpg,jpeg,png,gif --convert-links $article_url` ;
     }
     # be nice! waiting a wee bit
